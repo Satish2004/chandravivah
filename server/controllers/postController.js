@@ -35,8 +35,9 @@ exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).populate(
       "postedBy",
-      "name email"
+      "_id name"
     );
+
     if (!post) return res.status(404).json({ message: "Post not found" });
     res.json(post);
   } catch (error) {
@@ -47,36 +48,41 @@ exports.getPostById = async (req, res) => {
 };
 
 // ✅ Update post
+// Update post
 exports.updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post || post.postedBy.toString() !== req.userId)
-      return res.status(403).json({ message: "Not authorized" });
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    if (post.postedBy.toString() !== req.userId)
+      return res
+        .status(403)
+        .json({ message: "Not authorized to update this post" });
 
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
     res.json(updatedPost);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to update post", error: error.message });
+    res.status(500).json({ message: "Failed to update post", error });
   }
 };
 
-// ✅ Delete post
+// Delete post
 exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post || post.postedBy.toString() !== req.userId)
-      return res.status(403).json({ message: "Not authorized" });
+    if (!post) return res.status(404).json({ message: "Post not found" });
+
+    if (post.postedBy.toString() !== req.userId)
+      return res
+        .status(403)
+        .json({ message: "Not authorized to delete this post" });
 
     await Post.findByIdAndDelete(req.params.id);
     res.json({ message: "Post deleted successfully" });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to delete post", error: error.message });
+    res.status(500).json({ message: "Failed to delete post", error });
   }
 };
 
