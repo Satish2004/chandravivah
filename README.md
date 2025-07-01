@@ -1,4 +1,10 @@
-# chandravivah
+# chandravivah 
+
+emial chat 660 wala
+MONGO_URI=mongodb+srv://imsachandra:gTU6pvCSvN6FWnBv@chandravivah.cdmfp50.mongodb.net/
+JWT_SECRET=supersecurekey123
+
+
 
 # This is API for Login and register
 
