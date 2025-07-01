@@ -7,12 +7,15 @@ const commentSchema = new mongoose.Schema(
       ref: "Post",
       required: true,
     },
-    userId: {
+    text: {
+      type: String,
+      required: true,
+    },
+    commentedBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    text: { type: String, required: true },
   },
   { timestamps: true }
 );

@@ -1,7 +1,31 @@
-import React from "react";
+// src/App.jsx
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CreatePost from "./pages/CreatePost";
+import PostDetail from "./pages/PostDetail";
+import AdminPanel from "./pages/AdminPanel";
+import Navbar from "./components/Navbar";
 
-const App = () => {
-  return <div className="bg-amber-300">dhsshshhhdh</div>;
-};
+function App() {
+  return (
+    <>
+      <Navbar />
+      <div className="p-4">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create" element={<CreatePost />} />
+          <Route path="/post/:id" element={<PostDetail />} />
+          <Route path="/admin" element={<AdminPanel />} />
+        </Routes>
+      </div>
+    </>
+  );
+}
 
 export default App;

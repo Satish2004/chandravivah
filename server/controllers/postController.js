@@ -1,51 +1,56 @@
 const Post = require("../models/Post");
 
-// Create a post
+// ✅ Create a post
 exports.createPost = async (req, res) => {
   try {
+    console.log("REQ BODY:", req.body);
     const newPost = new Post({
       ...req.body,
-      postedBy: req.userId, // make sure you're using `postedBy` as per your schema
+      postedBy: req.userId,
     });
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (error) {
-    console.error("Create Post Error:", error); // log in terminal
+    console.error("Create Post Error:", error);
     res
       .status(500)
       .json({ message: "Failed to create post", error: error.message });
   }
 };
 
-// Get all posts
+// ✅ Get all posts
 exports.getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().populate("user", "name email");
+    const posts = await Post.find().populate("postedBy", "name email");
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch posts", error });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch posts", error: error.message });
   }
 };
 
-// Get single post
+// ✅ Get single post
 exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).populate(
-      "user",
+      "postedBy",
       "name email"
     );
     if (!post) return res.status(404).json({ message: "Post not found" });
     res.json(post);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch post", error });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch post", error: error.message });
   }
 };
 
-// Update post
+// ✅ Update post
 exports.updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post || post.user.toString() !== req.userId)
+    if (!post || post.postedBy.toString() !== req.userId)
       return res.status(403).json({ message: "Not authorized" });
 
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
@@ -53,20 +58,39 @@ exports.updatePost = async (req, res) => {
     });
     res.json(updatedPost);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update post", error });
+    res
+      .status(500)
+      .json({ message: "Failed to update post", error: error.message });
   }
 };
 
-// Delete post
+// ✅ Delete post
 exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
-    if (!post || post.user.toString() !== req.userId)
+    if (!post || post.postedBy.toString() !== req.userId)
       return res.status(403).json({ message: "Not authorized" });
 
     await Post.findByIdAndDelete(req.params.id);
     res.json({ message: "Post deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete post", error });
+    res
+      .status(500)
+      .json({ message: "Failed to delete post", error: error.message });
+  }
+};
+
+// ✅ Get posts created by current user
+exports.getMyPosts = async (req, res) => {
+  try {
+    const posts = await Post.find({ postedBy: req.userId }).populate(
+      "postedBy",
+      "name email"
+    );
+    res.json({ posts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to fetch your posts", error: error.message });
   }
 };

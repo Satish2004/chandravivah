@@ -5,6 +5,7 @@ const {
   getPostById,
   updatePost,
   deletePost,
+  getMyPosts,
 } = require("../controllers/postController");
 
 const verifyToken = require("../middleware/authMiddleware");
@@ -16,6 +17,7 @@ router.post("/", verifyToken, createPost);
 router.get("/", getAllPosts);
 router.get("/:id", getPostById);
 router.put("/:id", verifyToken, updatePost);
+router.get("/mine", verifyToken, getMyPosts); // <--- NEW
 router.delete("/:id", verifyToken, deletePost);
 
 module.exports = router;

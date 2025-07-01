@@ -5,6 +5,8 @@ const cors = require("cors");
 // routes import
 const authRoutes = require("./routes/authRoutes");
 const postRoutes = require("./routes/postRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+
 dotenv.config();
 
 const app = express();
@@ -13,15 +15,16 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Sample route
-app.get("/", (req, res) => {
-  res.send("ChandraVivah API is running");
-});
-
 // authentication routes
 app.use("/api/auth", authRoutes);
 // post routes
 app.use("/api/posts", postRoutes);
+// comment routes
+app.use("/api/comments", commentRoutes);
+// Sample route
+app.get("/", (req, res) => {
+  res.send("ChandraVivah API is running");
+});
 
 // MongoDB connection
 mongoose
