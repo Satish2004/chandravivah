@@ -23,17 +23,18 @@ const CreatePost = () => {
     city: "",
     state: "",
     mobile: "",
-    image: "",
+    image: null,
   });
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]:
+        type === "checkbox" ? checked : type === "file" ? files[0] : value,
     }));
   };
 
@@ -43,16 +44,20 @@ const CreatePost = () => {
     setSuccess("");
 
     const token = localStorage.getItem("token");
+    const form = new FormData();
+
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== null) form.append(key, value);
+    });
+
     try {
-      const res = await axios.post(
-        "http://localhost:5000/api/posts",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await axios.post("http://localhost:5000/api/posts", form, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
       setSuccess("Post created successfully!");
       setTimeout(() => navigate("/"), 1500);
     } catch (err) {
@@ -85,7 +90,6 @@ const CreatePost = () => {
           "city",
           "state",
           "mobile",
-          "image",
         ].map((field) => (
           <input
             key={field}
@@ -94,14 +98,23 @@ const CreatePost = () => {
             value={formData[field]}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
-            required={field !== "image"} // image is optional
+            required
           />
         ))}
 
+        <div>
+          <label>Image</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleChange}
+            className="w-full mt-1"
+          />
+        </div>
+
         <div className="flex items-center gap-2">
-          <label htmlFor="isRemarriage" className="text-sm">
-            Is Remarriage:
-          </label>
+          <label htmlFor="isRemarriage">Is Remarriage?</label>
           <input
             type="checkbox"
             name="isRemarriage"

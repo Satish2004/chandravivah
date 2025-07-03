@@ -9,6 +9,7 @@ import PostDetail from "./pages/PostDetail";
 import AdminPanel from "./pages/AdminPanel";
 import Navbar from "./components/Navbar";
 import PrivateRoute from "./components/PrivateRoute";
+import EditPost from "./pages/EditPost";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/edit/:id" element={<EditPost />} />
 
           <Route path="/create" element={<CreatePost />} />
           <Route path="/post/:id" element={<PostDetail />} />

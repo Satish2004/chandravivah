@@ -1,27 +1,23 @@
+// backend/routes/postRoutes.js
 const express = require("express");
+const router = express.Router();
+const multer = require("multer");
+const { storage } = require("../utils/cloudinary");
+const upload = multer({ storage });
+const verifyToken = require("../middleware/authMiddleware");
+
 const {
   createPost,
   getAllPosts,
   getPostById,
   updatePost,
   deletePost,
-  getMyPosts,
 } = require("../controllers/postController");
 
-const verifyToken = require("../middleware/authMiddleware");
-const multer = require("multer");
-const { storage } = require("../utils/cloudinary");
-const upload = multer({ storage });
-
-const router = express.Router();
-
-// Routes
-router.post("/", verifyToken, createPost);
+router.post("/", verifyToken, upload.single("image"), createPost);
 router.get("/", getAllPosts);
 router.get("/:id", getPostById);
-router.put("/:id", verifyToken, updatePost);
-router.get("/mine", verifyToken, getMyPosts); // <--- NEW
+router.put("/:id", verifyToken, upload.single("image"), updatePost);
 router.delete("/:id", verifyToken, deletePost);
-router.post("/", verifyToken, upload.single("image"), createPost);
 
 module.exports = router;

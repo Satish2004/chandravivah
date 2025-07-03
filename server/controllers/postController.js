@@ -1,92 +1,103 @@
 const Post = require("../models/Post");
 
-// ✅ Create a post
+// ✅ Create a Post
 exports.createPost = async (req, res) => {
   try {
-    console.log("REQ BODY:", req.body);
+    const imageUrl = req.file ? req.file.path : "";
+    console.log("Image URL:", imageUrl);
+
     const newPost = new Post({
       ...req.body,
+      image: imageUrl,
       postedBy: req.userId,
     });
+
     const savedPost = await newPost.save();
     res.status(201).json(savedPost);
   } catch (error) {
-    console.error("Create Post Error:", error);
-    res
-      .status(500)
-      .json({ message: "Failed to create post", error: error.message });
+    res.status(500).json({
+      message: "Failed to create post",
+      error: error.message,
+    });
   }
 };
 
-// ✅ Get all posts
+// ✅ Get All Posts
 exports.getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find().populate("postedBy", "name email");
     res.json(posts);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch posts", error: error.message });
+    res.status(500).json({
+      message: "Failed to fetch posts",
+      error: error.message,
+    });
   }
 };
 
-// ✅ Get single post
+// ✅ Get Single Post by ID
 exports.getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id).populate(
       "postedBy",
       "_id name"
     );
-
     if (!post) return res.status(404).json({ message: "Post not found" });
     res.json(post);
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch post", error: error.message });
+    res.status(500).json({
+      message: "Failed to fetch post",
+      error: error.message,
+    });
   }
 };
 
-// ✅ Update post
-// Update post
+// ✅ Update Post (Only Owner)
 exports.updatePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
+
     if (!post) return res.status(404).json({ message: "Post not found" });
 
+    // Only owner can update
     if (post.postedBy.toString() !== req.userId)
       return res
         .status(403)
         .json({ message: "Not authorized to update this post" });
 
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const updatedData = req.body;
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
     res.json(updatedPost);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update post", error });
+    res
+      .status(500)
+      .json({ message: "Failed to update post", error: error.message });
   }
 };
 
-// Delete post
+// ✅ Delete Post only if user is owner
 exports.deletePost = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) return res.status(404).json({ message: "Post not found" });
 
+    // Only allow owner to delete
     if (post.postedBy.toString() !== req.userId)
-      return res
-        .status(403)
-        .json({ message: "Not authorized to delete this post" });
+      return res.status(403).json({ message: "Not authorized to delete" });
 
     await Post.findByIdAndDelete(req.params.id);
     res.json({ message: "Post deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Failed to delete post", error });
+    console.error("Delete Error:", error.message);
+    res.status(500).json({ message: "Delete failed", error: error.message });
   }
 };
 
-// ✅ Get posts created by current user
+// ✅ Get Posts of Logged-in User
 exports.getMyPosts = async (req, res) => {
   try {
     const posts = await Post.find({ postedBy: req.userId }).populate(
@@ -95,8 +106,9 @@ exports.getMyPosts = async (req, res) => {
     );
     res.json({ posts });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Failed to fetch your posts", error: error.message });
+    res.status(500).json({
+      message: "Failed to fetch your posts",
+      error: error.message,
+    });
   }
 };

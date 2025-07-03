@@ -2,15 +2,10 @@ const mongoose = require("mongoose");
 
 const postSchema = new mongoose.Schema(
   {
-    postedBy: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     name: String,
     surname: String,
     gender: String,
-    age: Number,
+    age: String,
     caste: String,
     motherName: String,
     fatherName: String,
@@ -26,6 +21,10 @@ const postSchema = new mongoose.Schema(
     state: String,
     mobile: String,
     image: String,
+    postedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
   },
   { timestamps: true }
 );
