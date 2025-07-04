@@ -1,9 +1,14 @@
-import { useState } from "react";
-import axios from "axios";
+// src/pages/Register.jsx
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import gsap from "gsap";
+import axios from "axios";
 
 function Register() {
   const navigate = useNavigate();
+  const formRef = useRef(null);
+  const containerRef = useRef(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,6 +18,22 @@ function Register() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    gsap.fromTo(
+      containerRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
+    );
+    gsap.from(formRef.current, {
+      opacity: 0,
+      y: 30,
+      stagger: 0.1,
+      duration: 0.6,
+      delay: 0.5,
+      ease: "power2.out",
+    });
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -38,10 +59,12 @@ function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 shadow-md rounded-md bg-white mt-6">
+    <div
+      className="max-w-md mx-auto p-4 shadow-md rounded-md bg-white mt-10"
+      ref={containerRef}
+    >
       <h2 className="text-2xl font-bold mb-4 text-center">Register</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4" ref={formRef}>
         <input
           type="text"
           name="name"
@@ -51,7 +74,6 @@ function Register() {
           onChange={handleChange}
           required
         />
-
         <input
           type="email"
           name="email"
@@ -61,7 +83,6 @@ function Register() {
           onChange={handleChange}
           required
         />
-
         <input
           type="password"
           name="password"

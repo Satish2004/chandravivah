@@ -21,10 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 // comment routes
 app.use("/api/comments", commentRoutes);
-// Sample route
-app.get("/", (req, res) => {
-  res.send("ChandraVivah API is running");
-});
+// interest routes
 
 // MongoDB connection
 mongoose

@@ -27,12 +27,51 @@ function App() {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/edit/:id" element={<EditPost />} />
 
-          <Route path="/create" element={<CreatePost />} />
-          <Route path="/post/:id" element={<PostDetail />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/create"
+            element={
+              <PrivateRoute>
+                <CreatePost />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/edit/:id"
+            element={
+              <PrivateRoute>
+                <EditPost />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/post/:id"
+            element={
+              <PrivateRoute>
+                <PostDetail />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <AdminPanel />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </div>
     </>

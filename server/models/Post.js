@@ -20,6 +20,10 @@ const postSchema = new mongoose.Schema(
     city: String,
     state: String,
     mobile: String,
+    whatsapp: {
+      type: String,
+      required: true,
+    },
     image: String,
     postedBy: {
       type: mongoose.Schema.Types.ObjectId,
